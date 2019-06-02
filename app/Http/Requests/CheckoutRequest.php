@@ -23,8 +23,9 @@ class CheckoutRequest extends FormRequest
      */
     public function rules()
     {
+        $emailValidation = auth()->user() ? 'required|email|max:200' : 'required|email|max:200|unique:users';
         return [
-            'email'     => 'required|email|max:200',
+            'email'     => $emailValidation,
             'name'      => 'required|min:3|max:200',
             'address'   => 'required|min:3|max:200',
             'city'      => 'required|min:3|max:200',
@@ -32,6 +33,13 @@ class CheckoutRequest extends FormRequest
             'postalcode'      => 'required|numeric|min:2',
             'phone'      => 'required|min:7|max:50',
             'name_on_card'      => 'required|min:3|max:200',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'email.unique' => 'Ya tienes una cuenta con el correo ingresado. Por favor <a href="/login">inicia sesión</a> para continuar.',
         ];
     }
 }

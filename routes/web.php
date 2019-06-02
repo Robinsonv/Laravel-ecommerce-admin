@@ -17,21 +17,22 @@ Route::delete('/saveForLater/{product}', 'SaveForLaterController@destroy')->name
 Route::post('/saveForLater/switchToCart/{producto}', 'SaveForLaterController@switchToCart')->name('saveForLater.switchToCart');
 
 
-Route::get('empty', function (){
+Route::get('/empty', function (){
             
         Cart::destroy();
         return back();
 })->name("empty");
 
-Route::get('emptyinstance', function (){
+Route::get('/emptyinstance', function (){
             
     Cart::instance('saveForLater')->destroy();
     return back();
 })->name("empty.instance");
 
 
-Route::get('/checkout', 'CheckoutController@index')->name('checkout.index');
+Route::get('/checkout', 'CheckoutController@index')->name('checkout.index')->middleware('auth');
 Route::post('/checkout', 'CheckoutController@store')->name('checkout.store');
+Route::get('/guestCheckout', 'CheckoutController@index')->name('guestCheckout.index');
 
 
 Route::get('/thankyou', 'ConfirmationController@index')->name('confirmation.index');
@@ -42,3 +43,12 @@ Route::delete('/coupon', 'CouponController@destroy')->name('coupon.destroy');
 
 // Route::view('/checkout', 'checkout');
 // Route::view('/thankyou', 'thankyou');
+
+
+Route::group(['prefix' => 'admin'], function () {
+    Voyager::routes();
+});
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

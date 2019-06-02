@@ -10,3 +10,8 @@ function setActiveCategory($category)
 {
     return request()->category == $category ? 'active' : '';
 }
+function productImage($img)
+{
+    return ($img != NULL) && file_exists('storage/'.$img) ? asset('storage/'.$img) : asset('img/not-found.png');
+
+}
