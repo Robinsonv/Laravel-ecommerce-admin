@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Order;
+use App\Product;
+use App\OrderProduct;
 use Illuminate\Http\Request;
 use App\Http\Requests\CheckoutRequest;
-use Cartalyst\Stripe\Laravel\Facades\Stripe;
-use App\Product;
 use Gloudemans\Shoppingcart\Facades\Cart;
+use Cartalyst\Stripe\Laravel\Facades\Stripe;
 use Cartalyst\Stripe\Exception\CardErrorException;
 
 class CheckoutController extends Controller
@@ -73,6 +75,8 @@ class CheckoutController extends Controller
                 ]
             ]);
 
+            $this->addToOrdersTables($request, null);
+
             //SUCCESSFUL
             Cart::instance('default')->destroy();
             session()->forget('coupon');
@@ -81,6 +85,7 @@ class CheckoutController extends Controller
             return redirect()->route('confirmation.index')->with('success_message','Gracias! el pago ha sido aceptado');
 
         } catch (CardErrorException $e) {
+            $this->addToOrdersTables($request, $e->getMessage());
             return back()->withErrors('Error! ' . $e->getMessage() );
         }
     }
@@ -100,6 +105,37 @@ class CheckoutController extends Controller
             'newTax' => $newTax,
             'newTotal' => $newTotal,
         ]);
+    }
+
+    protected function addToOrdersTables($request, $error)
+    {
+        //insert into  in orders table
+        $order = Order::create([
+            'user_id' => auth()->user() ? auth()->user()->id : null,
+            'billing_email' => $request->email,
+            'billing_name' => $request->name,
+            'billing_address' => $request->address,
+            'billing_city' => $request->city,
+            'billing_province' => $request->province,
+            'billing_postalcode' => $request->postalcode,
+            'billing_phone' => $request->phone,
+            'billing_name_on_card' => $request->name_on_card,
+            'billing_discount' => getNumbers()->get('discount'),
+            'billing_discount_code' => getNumbers()->get('code'),
+            'billing_subtotal' => getNumbers()->get('newSubtotal'),
+            'billing_tax' => getNumbers()->get('newTax'),
+            'billing_total' => getNumbers()->get('newTotal'),
+            'error' => $error,
+
+        ]);
+        //insert into  order_product table
+        foreach (Cart::content() as $item) {
+            OrderProduct::create([
+                'order_id' => $order->id,
+                'product_id' => $item->model->id,
+                'quantity' => $item->qty,
+            ]);
+        }
     }
 
     /**
