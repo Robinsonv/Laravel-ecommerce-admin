@@ -21,8 +21,8 @@ class ShopController extends Controller
 
         }else{
 
-            $products = Product::where('facture', true);
-            $categoryName = 'Facture';
+            $products = Product::where('featured', true);
+            $categoryName = 'featured';
         }
 
         if( request()->sort == 'low_high' ){

@@ -242,7 +242,11 @@ class ProductsController extends VoyagerBreadController
         }
 
         if (!$request->ajax()) {
-            $this->insertUpdateData($request, $slug, $dataType->editRows, $data);
+
+            $requestNew = $request;
+            $requestNew['price'] = $request->price * 100;
+
+            $this->insertUpdateData($requestNew, $slug, $dataType->editRows, $data);
 
             event(new BreadDataUpdated($dataType, $data));
 
@@ -339,14 +343,18 @@ class ProductsController extends VoyagerBreadController
         }
 
         if (!$request->ajax()) {
-            $data = $this->insertUpdateData($request, $slug, $dataType->addRows, new $dataType->model_name());
+
+            $requestNew = $request;
+            $requestNew['price'] = $request->price * 100;
+
+            $data = $this->insertUpdateData($requestNew, $slug, $dataType->addRows, new $dataType->model_name());
 
             event(new BreadDataAdded($dataType, $data));
             //Customer
             $this->updateProductCategories($request, $data->id);
 
 
-        //endCustomer
+            //endCustomer
 
             return redirect()
                 ->route("voyager.{$dataType->slug}.index")
