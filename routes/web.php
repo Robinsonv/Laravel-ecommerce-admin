@@ -52,3 +52,11 @@ Route::group(['prefix' => 'admin'], function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/search', 'ShopController@search')->name('search');
+
+//try front in browser
+Route::get('/mail', function (){
+    $order = App\Order::find(1);
+
+    return new App\Mail\OrderPlace($order);
+});

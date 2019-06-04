@@ -8,34 +8,33 @@
 
 @section('content')
 
-    <div class="breadcrumbs">
-        <div class="container">
-            <a href="#">Home</a>
-            <i class="fa fa-chevron-right breadcrumb-separator"></i>
-            <span>Shopping Cart</span>
-        </div>
-    </div> <!-- end breadcrumbs -->
+    @component('components.breadcrumbs')
+        <a href="/">Home</a>
+        <i class="fa fa-chevron-right breadcrumb-separator"></i>
+        <span>Shopping Cart</span>
+    @endcomponent
+    <!-- end breadcrumbs -->
+
+    <div class="container">
+        @if (session()->has('success_message'))
+            <div class="alert alert-success">
+                {{ session()->get('success_message') }}
+            </div>
+        @endif
+
+        @if(count($errors) > 0)
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+    </div>
 
     <div class="cart-section container">
         <div>
-            @if( session()->has('success_message') )
-                <div class="alert alert-success">
-                    {{session()->get('success_message')}}
-                </div>
-            @endif
-
-            
-
-            @if( count($errors) > 0 )
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach( $errors->all() as $error)
-
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
 
             @if( Cart::count() > 0 )
                 
