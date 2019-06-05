@@ -13,9 +13,9 @@ class AddUserSettingsFix extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->text('settings')->nullable()->default(null)->after('remember_token');
-        });
+        // Schema::table('users', function (Blueprint $table) {
+        //     $table->text('settings')->nullable()->default(null)->after('remember_token');
+        // });
     }
     /**
      * Reverse the migrations.
@@ -24,8 +24,8 @@ class AddUserSettingsFix extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('settings');
-        });
+        // Schema::table('users', function (Blueprint $table) {
+        //     $table->dropColumn('settings');
+        // });
     }
 }

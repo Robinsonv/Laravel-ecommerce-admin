@@ -8,6 +8,17 @@ class PermissionsTableSeederCustom extends Seeder
      */
     public function run()
     {
+        $keys = [
+            'browse_bread',
+        ];
+
+        foreach ($keys as $key) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'table_name' => null,
+            ]);
+        }
+
         Permission::generateFor('products');
         Permission::generateFor('coupons');
         Permission::generateFor('category');
