@@ -18,7 +18,11 @@ class CartController extends Controller
         // dd(Cart::content());
         $mightAlsolike = Product::mightAlsoLike(4)->get();
         return view('cart')->with([
-            'mightAlsolike' => $mightAlsolike
+                'discount' => getNumbers()->get('discount'),
+                'newSubtotal' => getNumbers()->get('newSubtotal'),
+                'newTax' => getNumbers()->get('newTax'),
+                'newTotal' => getNumbers()->get('newTotal'),
+                'mightAlsolike' => $mightAlsolike
             ]);
     }
 

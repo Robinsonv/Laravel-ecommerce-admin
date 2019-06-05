@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Coupon;
-use Gloudemans\Shoppingcart\Facades\Cart;
+use App\Jobs\UpdateCoupon;
+use Illuminate\Http\Request;
 
 class CouponController extends Controller
 {
@@ -14,22 +14,19 @@ class CouponController extends Controller
         $coupon = Coupon::where('code', $request->coupon_code)->first();
 
         if(! $coupon ){
-            return redirect()->route('checkout.index')->withErrors('Cupon invalido. Por favor intente de nuevo !');
+            return redirect()->route('cart.index')->withErrors('Cupon invalido. Por favor intente de nuevo !');
         }
 
-        session()->put('coupon',[
-            'name' => $coupon->code,
-            'discount' => $coupon->discount( Cart::subtotal() ),
-        ]);
+        dispatch_now(new UpdateCoupon($coupon));
 
-        return redirect()->route('checkout.index')->with('success_message','Se ha usado el cupo con éxito !');
+        return redirect()->route('cart.index')->with('success_message','Se ha usado el cupo con éxito !');
 
     }
 
     public function destroy()
     {
         session()->forget('coupon');
-        return redirect()->route('checkout.index')->with('success_message','El cupo se ha removido con éxito !');
+        return redirect()->route('cart.index')->with('success_message','El cupo se ha removido con éxito !');
 
     }
 }

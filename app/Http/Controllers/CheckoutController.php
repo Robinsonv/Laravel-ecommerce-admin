@@ -31,10 +31,10 @@ class CheckoutController extends Controller
         }
         
         return view('checkout')->with([
-            'discount' => $this->realTotals()->get('discount'),
-            'newSubtotal' => $this->realTotals()->get('newSubtotal'),
-            'newTax' => $this->realTotals()->get('newTax'),
-            'newTotal' => $this->realTotals()->get('newTotal'),
+            'discount' => getNumbers()->get('discount'),
+            'newSubtotal' => getNumbers()->get('newSubtotal'),
+            'newTax' => getNumbers()->get('newTax'),
+            'newTotal' => getNumbers()->get('newTotal'),
         ]);
     }
 
@@ -65,7 +65,7 @@ class CheckoutController extends Controller
         try {
 
             $charge = Stripe::charges()->create([
-                'amount' => $this->realTotals()->get('newTotal') / 100,
+                'amount' => getNumbers()->get('newTotal') / 100,
                 'currency' => 'CAD',
                 'source' => $request->stripeToken,
                 'description' => 'Order',
@@ -91,23 +91,6 @@ class CheckoutController extends Controller
             $this->addToOrdersTables($request, $e->getMessage());
             return back()->withErrors('Error! ' . $e->getMessage() );
         }
-    }
-
-    private function realTotals()
-    {
-        $tax = config('cart.tax') / 100;
-        $discount = session()->get('coupon')['discount'] ?? 0;
-        $newSubtotal = (Cart::subtotal() - $discount );
-        $newTax =  $newSubtotal * $tax ;
-        $newTotal =  $newSubtotal * ( 1 + $tax );
-
-        return collect([
-            'tax' => $tax,
-            'discount' => $discount,
-            'newSubtotal' => $newSubtotal,
-            'newTax' => $newTax,
-            'newTotal' => $newTotal,
-        ]);
     }
 
     protected function addToOrdersTables($request, $error)
