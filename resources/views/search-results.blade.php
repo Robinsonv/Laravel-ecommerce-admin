@@ -53,7 +53,7 @@
                     <tr>
                         <th><a href="{{ route('shop.show', $product->slug) }}">{{ $product->name }}</a></th>
                         <td>{{ $product->details }}</td>
-                        <td>{{ str_limit($product->description, 70) }}</td>
+                        <td>{!! str_limit($product->description, 70) !!}</td>
                         <td>{{ $product->presetPrice() }}</td>
                     </tr>
                 @endforeach

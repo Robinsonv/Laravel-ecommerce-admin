@@ -56,6 +56,12 @@ class CheckoutController extends Controller
      */
     public function store(CheckoutRequest $request)
     {
+
+        //Verificar la catidad del producto, si es cero no procesar la compra ni hacer la resta en el stock
+        if( $this->productAreNoLogerAvailable() ){
+            return back()->withErrors('Sorry! One of the items in your cart is no loger avialble.');
+        }
+
         
         $contents = Cart::content()->map(function ($item)
         {
@@ -79,6 +85,9 @@ class CheckoutController extends Controller
 
             $order = $this->addToOrdersTables($request, null);
             Mail::send(new OrderPlace($order));
+
+            //decrease the quantity de product in cart
+            $this->decreaseQueantities();
 
             //SUCCESSFUL
             Cart::instance('default')->destroy();
@@ -126,48 +135,24 @@ class CheckoutController extends Controller
         return $order;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+    protected function decreaseQueantities(){
+        foreach (Cart::content() as $item) {
+            $product = Product::find($item->model->id);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+            $product->update(['quantity' => $product->quantity - $item->qty]);
+        }
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    
+    protected function productAreNoLogerAvailable()
     {
-        //
-    }
+        foreach (Cart::content() as $item) {
+            $product = Product::find($item->model->id);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+            if( $product->quantity < $item->qty ){
+                return true;
+            }
+        }
+
+        return false;
     }
 }

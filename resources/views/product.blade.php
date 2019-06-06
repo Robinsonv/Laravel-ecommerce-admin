@@ -56,6 +56,7 @@
         <div class="product-section-information">
             <h1 class="product-section-title">{{ $product->name }}</h1>
             <div class="product-section-subtitle">{{ $product->details }}</div>
+            <div>{!! $stockLevel !!} </div>
             <div class="product-section-price">{{ $product->presetPrice() }}</div>
 
             <p>
@@ -65,16 +66,22 @@
             
             <p>&nbsp;</p>
 
-            <!-- <a href="#" class="button">Add to Cart</a> -->
-            <form action="{{ route('cart.store') }}" method="POST">
-                {{ csrf_field() }}
+            @if( $product->quantity != 0 )
 
-                <input type="hidden" name="id" value="{{ $product->id }}">
-                <input type="hidden" name="name" value="{{ $product->name }}">
-                <input type="hidden" name="price" value="{{ $product->price }}">
+                <!-- <a href="#" class="button">Add to Cart</a> -->
+                <form action="{{ route('cart.store') }}" method="POST">
+                    {{ csrf_field() }}
 
-                <button type="submit" class="button button-plain">Add to Cart</button>
-            </form>
+                    <input type="hidden" name="id" value="{{ $product->id }}">
+                    <input type="hidden" name="name" value="{{ $product->name }}">
+                    <input type="hidden" name="price" value="{{ $product->price }}">
+
+                    <button type="submit" class="button button-plain">Add to Cart</button>
+                </form>
+            @endif
+
+            
+
         </div>
     </div> <!-- end product-section -->
 

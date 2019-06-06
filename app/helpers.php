@@ -36,3 +36,19 @@ function getNumbers()
         'newTotal' => $newTotal,
     ]);
 }
+
+function getStockLevel($quantity)
+{
+    if( $quantity > setting('site.stock_thresshold') ){
+        $stockLevel = '<span class="badge badge-success">In stock</span>';
+        
+    }elseif( $quantity < setting('site.stock_thresshold') && $quantity > 0 ){
+        $stockLevel = '<span class="badge badge-warning">Low stock</span>';
+    }
+    else{
+        $stockLevel = '<span class="badge badge-danger">Not available</span>';
+
+    }
+
+    return $stockLevel;
+}
