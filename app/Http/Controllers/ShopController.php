@@ -11,7 +11,7 @@ class ShopController extends Controller
     
     public function index()
     {
-        $pagination = 6;
+        $pagination = 9;
         $categories = Category::all();
         if(request()->category){
             $products = Product::with('categories')->whereHas('categories', function ($query){

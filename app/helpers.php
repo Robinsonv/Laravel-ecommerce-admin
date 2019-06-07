@@ -1,5 +1,7 @@
 <?php 
 
+use Illuminate\Support\Carbon;
+
 function presetPrice($price){
     $realPrice = (int)$price;
 
@@ -51,4 +53,9 @@ function getStockLevel($quantity)
     }
 
     return $stockLevel;
+}
+
+function presentDate($date)
+{
+    return Carbon::parse($date)->format('M d, Y');
 }
